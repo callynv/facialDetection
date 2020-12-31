@@ -1,5 +1,5 @@
-#This program uses cv2 module that detects when someone smiles :)
-#Created by Callyn Villanueva (updated Dec3)
+#This program uses cv2 module that detects when someone smiling and also detects contours
+#Created by Callyn Villanueva (updated Dec3 // new update Dec 21)
 
 import cv2
 
@@ -17,6 +17,7 @@ if not vidcappy.isOpened():
 while True:
     #Ret will obtain return value from getting the camera frame, either true of false (boolean).
     ret, image = vidcappy.read()
+    ret, image2 = vidcappy.read()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     '''
@@ -34,10 +35,21 @@ while True:
             cv2.rectangle(image, (sx, sy), ((sx + sw), (sy + sh)), (300,300,0), 2)
 
 
-    cv2.imshow('img',image)
+            edges = cv2.Canny(gray, 50, 200)
+            contours, hierarchy = cv2.findContours(edges.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
 
-    #saving image to desktop! :)
+            for c in contours:
+                accuracy = 0.05 * cv2.arcLength(c, True)
+                approx = cv2.approxPolyDP(c, accuracy, True)
+                cv2.drawContours(image2, [approx], 0, (0, 255, 0), 2)
 
+    '''
+       Running the program will display two different windows. 
+       The Window on the left demonstrates the cascade classifiers for smiling
+       The Window on the right demonstrates the contour/edge detection 
+       '''
+    cv2.imshow('Viewing Image that classifies a smile', image)
+    cv2.imshow('Viewing Image with Approximated Contours', image2)
 
 
     #keyboard binding function! Press escape to exit the program!
